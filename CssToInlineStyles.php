@@ -103,17 +103,17 @@ class CssToInlineStyles
             // E + F, Matches any F element immediately preceded by an element
             '/(\w)\s*\+\s*(\w)/',
             // E[foo], Matches any E element with the "foo" attribute set (whatever the value)
-            '/(\w)\[([\w\-]+)]/',
+            '/(\w)\[([\w\-_]+)]/',
             // E[foo="warning"], Matches any E element whose "foo" attribute value is exactly equal to "warning"
-            '/(\w)\[([\w\-]+)\=\"(.*)\"]/',
+            '/(\w)\[([\w\-_]+)\=\"(.*)\"]/',
             // div.warning, HTML only. The same as DIV[class~="warning"]
-            '/(\w+|\*)+\.([\w\-]+)+/',
+            '/(\w+|\*)\.([\w\-_]+)+/',
             // .warning, HTML only. The same as *[class~="warning"]
-            '/\.([\w\-]+)/',
+            '/\.([\w\-_]+)/',
             // E#myid, Matches any E element with id-attribute equal to "myid"
-            '/(\w+)+\#([\w\-]+)/',
+            '/(\w+)+\#([\w\-_]+)/',
             // #myid, Matches any element with id-attribute equal to "myid"
-            '/\#([\w\-]+)/'
+            '/\#([\w\-_]+)/'
         );
 
         // the xPath-equivalent
