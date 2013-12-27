@@ -154,25 +154,35 @@ class CssToInlineStyles
      */
     private function calculateCSSSpecifity($selector)
     {
-        // cleanup selector
-        $selector = str_replace(array('>', '+'), array(' > ', ' + '), $selector);
+        // strip certain whitespace from selector
+		$selector = preg_replace('/\s?(\>|\+)\s?/', '$1', $selector);
 
         // init var
         $specifity = 0;
 
         // split the selector into chunks based on spaces
-        $chunks = explode(' ', $selector);
+        $chunks = preg_split( '/\>|\+|\s/', $selector);
 
         // loop chunks
+        // note: larger numbers are used because otherwise the
+        //       tenth selector with an element (e.g. "span") would have the same
+        //       specifity as the first selector if it was a class (e.g. ".classname")
         foreach ($chunks as $chunk) {
-            // an ID is important, so give it a high specifity
-            if(strstr($chunk, '#') !== false) $specifity += 100;
+            // +100000 for each ID in the selector
+            $specifity += 100000 * substr_count($chunk, '#');
 
-            // classes are more important than a tag, but less important then an ID
-            elseif(strstr($chunk, '.')) $specifity += 10;
+            // another 10000 for each class in the selector
+            $specifity += 10000 * substr_count($chunk, '.');
 
-            // anything else isn't that important
-            else $specifity += 1;
+            // another +1000 for each tag name in front of a class or ID (e.g. li.myclass)
+            if (preg_match('/\w+\.\w+/', $chunk) && substr($chunk, 0, 1) != '.' && substr($chunk, 0, 1) != '#' ) {
+                $specifity += 1000;
+            }
+
+            // and finally another +1000 for each element (everything that's not #div, * or .myclass)
+            if (!preg_match('/^(#|\*|\.)\w+/', $chunk)) {
+              $specifity += 1000;
+			}
         }
 
         // return
@@ -554,10 +564,10 @@ class CssToInlineStyles
 
                 // add into global rules
                 $this->cssRules[] = $ruleSet;
-            }
 
-            // increment
-            $i++;
+                // increment
+                $i++;
+            }
         }
 
         // sort based on specifity
