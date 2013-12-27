@@ -198,11 +198,14 @@ class CssToInlineStyles
      */
     private function cleanupHTML($html)
     {
+        // strip style definitions if the have the "cleanup" class
+        $html = preg_replace('/<style[^>]+class="cleanup"[^>]*>.*<\/style>/Usi', ' ', $html);
+
         // remove classes
-        $html = preg_replace('/(\s)+class="(.*)"(\s)*/U', ' ', $html);
+        $html = preg_replace('/(?:\s)+class="(?:[^"]*)"(?:\s)*/U', ' ', $html);
 
         // remove IDs
-        $html = preg_replace('/(\s)+id="(.*)"(\s)*/U', ' ', $html);
+        $html = preg_replace('/(?:\s)+id="(?:[^"]*)"(?:\s)*/U', ' ', $html);
 
         // return
         return $html;
